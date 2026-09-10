@@ -44,10 +44,14 @@ npm run preview
 Deploy Pages:
 
 ```bash
-npm run deploy   # builds then gh-pages -d dist
+npm run build
+touch dist/.nojekyll   # required so GitHub does not run Jekyll
+# publish dist/ to the gh-pages branch (gh-pages npm package or manual orphan branch)
+npx gh-pages -d dist --dotfiles
 ```
 
-Or enable GitHub Pages on the `gh-pages` branch (root).
+Enable GitHub Pages: Settings → Pages → Deploy from branch `gh-pages` / (root).
+Site: https://alltomstales-dotcom.github.io/pdf2fhir/
 
 ## Environment
 

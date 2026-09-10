@@ -8,8 +8,8 @@
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist"
+    "predeploy": "npm run build && touch dist/.nojekyll",
+    "deploy": "echo \"Prefer: npm run build && touch dist/.nojekyll then push dist to gh-pages (see README). Attempting gh-pages...\" && gh-pages -d dist --dotfiles"
   },
   "dependencies": {
     "pdfjs-dist": "^4.10.38",
@@ -24,6 +24,7 @@
     "@vitejs/plugin-react": "^6.1.1",
     "gh-pages": "^6.3.0",
     "oxlint": "^1.81.0",
+    "tsx": "^4.23.13",
     "typescript": "~6.0.2",
     "vite": "^8.3.0"
   },
