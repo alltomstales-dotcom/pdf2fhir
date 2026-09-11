@@ -6,6 +6,8 @@
 
 Live demo (GitHub Pages): https://alltomstales-dotcom.github.io/pdf2fhir/
 
+**Deployment options (AWS / Claude Code / real PDFs):** [DEPLOYMENT.md](./DEPLOYMENT.md) · on Pages: https://alltomstales-dotcom.github.io/pdf2fhir/DEPLOYMENT.md
+
 ## What it does
 
 1. Upload a clinical PDF (or click **Run sample**)
