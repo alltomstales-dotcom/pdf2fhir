@@ -1,0 +1,462 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Extract hosting decision matrix — PDF2FHIR</title>
+    <style>
+      :root {
+        --bg: #0f1419;
+        --panel: #1a2332;
+        --border: #2d3a4f;
+        --text: #e7ecf3;
+        --muted: #9aa8bc;
+        --accent: #3d9cf0;
+        --accent2: #2dd4a8;
+        --warn: #f0b429;
+        --demo: #a78bfa;
+        --danger: #f07178;
+        --radius: 10px;
+        font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        color: var(--text);
+        background: var(--bg);
+        line-height: 1.5;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: radial-gradient(ellipse at top, #1a2740 0%, var(--bg) 55%);
+      }
+      .app {
+        max-width: 1040px;
+        margin: 0 auto;
+        padding: 1.5rem 1rem 3rem;
+      }
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 1rem;
+        margin-bottom: 1rem;
+        flex-wrap: wrap;
+      }
+      .header h1 {
+        margin: 0;
+        font-size: 1.65rem;
+        letter-spacing: -0.02em;
+      }
+      .tagline {
+        margin: 0.25rem 0 0;
+        color: var(--muted);
+        font-size: 0.95rem;
+      }
+      a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+      a:hover { text-decoration: underline; }
+      .nav-link {
+        display: inline-block;
+        padding: 0.4rem 0.75rem;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: #243044;
+        color: var(--text);
+        font-size: 0.85rem;
+        font-weight: 600;
+      }
+      .nav-link:hover { text-decoration: none; border-color: var(--accent); }
+      .panel {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 1rem 1.15rem;
+        margin-bottom: 1rem;
+      }
+      .panel h2 {
+        margin: 0 0 0.75rem;
+        font-size: 1.1rem;
+      }
+      .panel h3 {
+        margin: 1rem 0 0.4rem;
+        font-size: 1rem;
+        color: var(--accent2);
+      }
+      .panel h3:first-of-type { margin-top: 0.25rem; }
+      .banner {
+        border-radius: var(--radius);
+        padding: 0.75rem 1rem;
+        margin-bottom: 1rem;
+        font-size: 0.92rem;
+        border: 1px solid transparent;
+      }
+      .banner-info {
+        background: #1e2a3d;
+        border-color: var(--border);
+        color: var(--muted);
+      }
+      .banner-warn {
+        background: color-mix(in srgb, var(--warn) 15%, var(--panel));
+        border-color: color-mix(in srgb, var(--warn) 45%, transparent);
+      }
+      .banner-demo {
+        background: color-mix(in srgb, var(--demo) 18%, var(--panel));
+        border-color: color-mix(in srgb, var(--demo) 45%, transparent);
+      }
+      .rule {
+        background: color-mix(in srgb, var(--accent2) 12%, var(--panel));
+        border: 1px solid color-mix(in srgb, var(--accent2) 40%, transparent);
+        border-radius: var(--radius);
+        padding: 0.85rem 1rem;
+        margin-bottom: 1rem;
+        font-size: 0.95rem;
+      }
+      .rule strong { color: var(--accent2); }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.85rem;
+        margin: 0.5rem 0 0.25rem;
+      }
+      th, td {
+        border: 1px solid var(--border);
+        padding: 0.55rem 0.65rem;
+        text-align: left;
+        vertical-align: top;
+      }
+      th {
+        background: #0f1724;
+        color: var(--muted);
+        font-weight: 600;
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+      }
+      td { background: #121a28; }
+      .mono {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 0.8rem;
+      }
+      .win {
+        color: var(--accent2);
+        font-weight: 600;
+      }
+      ul.compact {
+        margin: 0.4rem 0 0;
+        padding-left: 1.2rem;
+      }
+      ul.compact li { margin-bottom: 0.35rem; }
+      .footer {
+        margin-top: 1.5rem;
+        color: var(--muted);
+        font-size: 0.8rem;
+        text-align: center;
+      }
+      .arch {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 0.82rem;
+        background: #0a1018;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 0.85rem 1rem;
+        overflow-x: auto;
+        white-space: pre;
+        color: #c5d4e8;
+      }
+      .scroll {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      .pill {
+        display: inline-block;
+        padding: 0.2rem 0.55rem;
+        border-radius: 999px;
+        font-size: 0.72rem;
+        font-weight: 600;
+        background: color-mix(in srgb, var(--demo) 25%, transparent);
+        color: #d4c4ff;
+        border: 1px solid color-mix(in srgb, var(--demo) 50%, transparent);
+      }
+      @media (max-width: 720px) {
+        table { font-size: 0.78rem; }
+        th, td { padding: 0.45rem 0.5rem; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <header class="header">
+        <div>
+          <h1>Extract hosting decision matrix</h1>
+          <p class="tagline">
+            PDF2FHIR · where to run the LLM extract step ·
+            <span class="pill">SIM / FDE planning</span>
+          </p>
+        </div>
+        <a class="nav-link" href="../">← Demo app</a>
+      </header>
+
+      <div class="banner banner-warn">
+        <strong>Disclaimer:</strong> Not clinical advice. Not for diagnosis, treatment, or billing.
+        Prices are approximate <span class="mono">us-east-1</span> on-demand ballparks (API list / EC2 OD);
+        verify before you buy. This page is a SIM / educational planning aid for PDF2FHIR demos and FDE conversations.
+      </div>
+
+      <div class="rule">
+        <strong>Rule of thumb:</strong>
+        Under ~500 docs/day, managed mini / Haiku usually wins on total cost + ops.
+        Bedrock ≈ Anthropic quality with AWS account packaging (BAA path) — typically
+        <em>not</em> cheaper than going direct to Anthropic.
+        Prefer Spark / g6e (or larger) when you need air-gap or PHI that must stay on-prem / in-VPC with no third-party model API.
+      </div>
+
+      <section class="panel">
+        <h2>Architecture reminder</h2>
+        <p style="margin:0 0 0.75rem;color:var(--muted);font-size:0.92rem;">
+          PDF2FHIR (and production-shaped cousins) should <strong>not</strong> ask the LLM for a free-form FHIR Bundle.
+          Keep the model in a typed extract lane; map and validate deterministically.
+        </p>
+        <div class="arch">PDF / text
+  → LLM → typed JSON extract (schema-constrained)
+  → deterministic FHIR R4 mapper
+  → terminology / code post-check
+  → Bundle (Patient, Encounter, Condition, Observation, MedicationRequest, …)</div>
+      </section>
+
+      <section class="panel">
+        <h2>Options at a glance</h2>
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Option</th>
+                <th>Examples</th>
+                <th>Cost ballpark</th>
+                <th>~$ / doc*</th>
+                <th>When it wins</th>
+                <th>Ops / PHI</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Managed API</strong></td>
+                <td>OpenAI gpt-4o-mini / Azure OpenAI; Anthropic Claude Haiku/Sonnet; <strong>AWS Bedrock</strong> (Claude Haiku/Sonnet, Llama)</td>
+                <td class="mono">
+                  mini ≈ $0.15 / $0.60 per 1M in/out<br />
+                  Haiku ≈ $0.80–$1 / $4–$5<br />
+                  Sonnet ≈ $3 / $15<br />
+                  Bedrock Claude ≈ Anthropic list (account packaging)
+                </td>
+                <td class="mono">
+                  mini ≈ $0.002–0.004<br />
+                  Haiku ≈ $0.01–0.02<br />
+                  Sonnet ≈ $0.05–0.06
+                </td>
+                <td><span class="win">Default under ~500 docs/day</span>; fastest time-to-demo; Azure/Bedrock when enterprise procurement / BAA already lives in that cloud</td>
+                <td>Lowest ops. PHI → need BAA + data-handling review. Bedrock helps AWS-native BAA packaging; not a free lunch on $/token.</td>
+              </tr>
+              <tr>
+                <td><strong>Hosted open-weight</strong></td>
+                <td>Fireworks / Together / Groq-style Qwen / Llama (OpenAI-compatible <span class="mono">/v1/chat/completions</span>)</td>
+                <td class="mono">
+                  Often ~$0.20–$0.90 / 1M tokens<br />
+                  (model-size dependent; check current list)
+                </td>
+                <td class="mono">≈ $0.002–0.01</td>
+                <td>OpenAI-compat drop-in for PDF2FHIR Settings; good quality/cost on 7B–70B class; bursty demos without GPU ops</td>
+                <td>Still a third-party host — treat like managed API for PHI unless you have a contract / region / VPC path that satisfies policy.</td>
+              </tr>
+              <tr>
+                <td><strong>Self-host EC2</strong></td>
+                <td>
+                  g4dn (T4 16GB) ~$0.53/hr → ~7B<br />
+                  g6 (L4 24GB) ~$0.80/hr → ~14B<br />
+                  g6e (L40S 48GB) ~$1.86/hr → ~32B<br />
+                  p5 (H100 80GB) ~$6.88/hr → 70B+
+                </td>
+                <td class="mono">
+                  GPU OD $/hr (above)<br />
+                  + AMI, EBS, egress, idle waste
+                </td>
+                <td class="mono">
+                  Highly utilization-dependent:<br />
+                  busy T4/L4 can land ~$0.01–0.05+;<br />
+                  idle → costs explode vs API
+                </td>
+                <td>Steady high volume; VPC-only traffic; custom models / fine-tunes; AWS-native control plane without Bedrock model API</td>
+                <td>Real ops: drivers, vLLM/TGI, autoscaling, patching. PHI can stay in-account if designed correctly — you own the blast radius.</td>
+              </tr>
+              <tr>
+                <td><strong>On-prem DGX Spark</strong></td>
+                <td>128GB UMA; Qwen2.5-72B-class local inference; PHI stays local</td>
+                <td class="mono">
+                  CapEx + power + rack / desk ops<br />
+                  (no per-token bill; opportunity cost vs cloud)
+                </td>
+                <td class="mono">≈ $0 marginal / doc after CapEx<br />(amortize hardware + staff)</td>
+                <td><span class="win">Air-gap / strict PHI</span>; offline clinics / labs; demos where data never leaves the room</td>
+                <td>Highest ownership: cooling, updates, model weights, physical security. Best when policy forbids any external model endpoint.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="tagline" style="margin-top:0.75rem;">
+          * $/doc assumes ~8k input + ~2k output JSON tokens per document (typical discharge-summary extract → typed JSON). Your PDFs and prompts will differ.
+        </p>
+      </section>
+
+      <section class="panel">
+        <h2>1. Managed API</h2>
+        <h3>OpenAI gpt-4o-mini / Azure OpenAI</h3>
+        <ul class="compact">
+          <li>Cheapest “good enough” extract for structured clinical JSON at demo and pilot scale.</li>
+          <li>Azure OpenAI when the customer already has an Azure enterprise agreement / HIPAA BAA path.</li>
+          <li class="mono">~$ / doc ≈ 8e-3×$0.15 + 2e-3×$0.60 ≈ $0.0024 (list ballpark).</li>
+        </ul>
+        <h3>Anthropic Claude (Haiku / Sonnet)</h3>
+        <ul class="compact">
+          <li>Haiku: strong structured extract; often the quality step-up still under a few cents/doc.</li>
+          <li>Sonnet: use when long messy notes need better instruction-following; watch $/doc (~5–6¢ at 8k+2k).</li>
+        </ul>
+        <h3>AWS Bedrock (Claude Haiku/Sonnet, Llama)</h3>
+        <ul class="compact">
+          <li>Same model families, billed through AWS — packaging and BAA/compliance story for AWS-native accounts.</li>
+          <li><strong>Expect Anthropic-like quality, not a discount vs Anthropic direct.</strong> Llama on Bedrock can be the cost lever if quality gates pass.</li>
+          <li>Wins when the FDE motion is “stay inside the customer’s AWS org,” not when pure $/1M is the only criterion.</li>
+        </ul>
+      </section>
+
+      <section class="panel">
+        <h2>2. Hosted open-weight (OpenAI-compatible)</h2>
+        <ul class="compact">
+          <li>Fireworks / Together / Groq-style endpoints for Qwen / Llama — point PDF2FHIR Settings <span class="mono">base URL</span> at their <span class="mono">/v1</span> and keep the same client.</li>
+          <li>Often competitive with mini on $/doc for mid-size models; latency varies (Groq-class for speed demos).</li>
+          <li>Still SaaS: confirm DPA/BAA and residency before PHI. Great for public demos and de-identified corpora.</li>
+        </ul>
+      </section>
+
+      <section class="panel">
+        <h2>3. Self-host EC2 (us-east-1 OD ballparks)</h2>
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Instance</th>
+                <th>GPU</th>
+                <th>~$ / hr</th>
+                <th>Practical model class</th>
+                <th>Notes for extract</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="mono">g4dn</td>
+                <td>T4 16GB</td>
+                <td class="mono">~$0.53</td>
+                <td>~7B</td>
+                <td>Entry GPU; fine for small instruct models + batch extract if quantized.</td>
+              </tr>
+              <tr>
+                <td class="mono">g6</td>
+                <td>L4 24GB</td>
+                <td class="mono">~$0.80</td>
+                <td>~14B</td>
+                <td>Better headroom; common sweet spot for always-on VPC extract.</td>
+              </tr>
+              <tr>
+                <td class="mono">g6e</td>
+                <td>L40S 48GB</td>
+                <td class="mono">~$1.86</td>
+                <td>~32B</td>
+                <td>Stronger quality without jumping to H100; air-gap-ish inside VPC.</td>
+              </tr>
+              <tr>
+                <td class="mono">p5</td>
+                <td>H100 80GB</td>
+                <td class="mono">~$6.88</td>
+                <td>70B+</td>
+                <td>Only when 70B quality is required and utilization is high; otherwise managed Sonnet is cheaper.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <ul class="compact">
+          <li><strong>Utilization is the whole game.</strong> A g6 at $0.80/hr idle 20 hrs/day loses badly to mini at $0.003/doc.</li>
+          <li>Estimate docs/hr from tokens/sec of your serving stack (vLLM etc.), then <span class="mono">$/doc ≈ $/hr ÷ docs/hr</span>.</li>
+          <li>Add autoscaling, spot (careful with stateful loads), and private networking to the design — not just the GPU SKU.</li>
+        </ul>
+      </section>
+
+      <section class="panel">
+        <h2>4. On-prem DGX Spark</h2>
+        <ul class="compact">
+          <li><strong>128GB UMA</strong> class workstation / appliance: room for Qwen2.5-72B-class (quantized / efficient serving) without sending tokens to a vendor API.</li>
+          <li><span class="win">PHI stays local</span> — the clearest win vs any managed or hosted-open-weight option when policy is air-gap or “data never leaves the building.”</li>
+          <li>Trade CapEx + operator time for zero marginal API spend; pair with the same typed-JSON → FHIR mapper so the LLM never invents Bundle resources.</li>
+          <li>Also a strong live-demo story: extract on the desk, Bundle on the laptop, no egress.</li>
+        </ul>
+      </section>
+
+      <section class="panel">
+        <h2>Decision cheatsheet (docs/day × constraints)</h2>
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Situation</th>
+                <th>Lean toward</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>&lt; ~500 docs/day, no air-gap, need speed</td>
+                <td class="win">Managed mini or Haiku (OpenAI / Azure / Anthropic)</td>
+              </tr>
+              <tr>
+                <td>AWS customer, need BAA packaging, Claude quality</td>
+                <td>Bedrock Claude (expect ≈ Anthropic $/quality, better AWS story)</td>
+              </tr>
+              <tr>
+                <td>Want OpenAI-compat + open weights, still SaaS</td>
+                <td>Fireworks / Together / Groq-style Qwen/Llama</td>
+              </tr>
+              <tr>
+                <td>Steady volume + VPC-only + custom serving</td>
+                <td>EC2 g6 / g6e (size to model); watch idle cost</td>
+              </tr>
+              <tr>
+                <td>Air-gap / PHI must not leave site</td>
+                <td class="win">DGX Spark (or equivalent on-prem) / locked-down g6e in isolated VPC</td>
+              </tr>
+              <tr>
+                <td>70B+ quality without CapEx</td>
+                <td>Managed Sonnet or Bedrock Sonnet — usually beats idle p5</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <div class="banner banner-demo">
+        PDF2FHIR demo Settings already speak <strong>OpenAI-compatible</strong>
+        <span class="mono">chat/completions</span> — so managed OpenAI/Azure, many Bedrock-compatible proxies,
+        and Fireworks/Together/Groq-style hosts can be swapped via base URL + model without rewriting the mapper.
+      </div>
+
+      <div class="banner banner-info">
+        Prices and SKUs change. Re-check OpenAI / Anthropic / Bedrock model cards and EC2 pricing in the target region
+        before a customer quote. Token counts above are planning defaults for ~8k in + ~2k out JSON, not a guarantee.
+      </div>
+
+      <footer class="footer">
+        <p>
+          <a href="../">PDF2FHIR demo</a>
+          · Extract hosting decision matrix
+          · SIM / educational prototype · NOT FOR CLINICAL USE
+        </p>
+      </footer>
+    </div>
+  </body>
+</html>

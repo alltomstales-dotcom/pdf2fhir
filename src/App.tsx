@@ -87,6 +87,9 @@ export default function App() {
           </p>
         </div>
         <div className="header-meta">
+          <a className="header-link" href={`${import.meta.env.BASE_URL}hosting/`}>
+            Hosting &amp; cost matrix
+          </a>
           <span className={`pill ${hasApiKey(settings) ? 'pill-live' : 'pill-demo'}`}>
             {hasApiKey(settings) ? 'Key set → Live' : 'No key → Stub'}
           </span>
@@ -149,6 +152,11 @@ export default function App() {
           Stub codes are illustrative (ICD-10 / LOINC / SNOMED / RxNorm).{' '}
           <a href={`${import.meta.env.BASE_URL}DEPLOYMENT.md`}>Deployment options</a>
           {' '}(AWS / Claude Code / real PDFs).
+        </p>
+        <p>
+          <a href={`${import.meta.env.BASE_URL}hosting/`}>Hosting &amp; cost matrix</a>
+          {' · '}
+          extract hosting options for managed API, hosted open-weight, EC2, and on-prem.
         </p>
       </footer>
     </div>

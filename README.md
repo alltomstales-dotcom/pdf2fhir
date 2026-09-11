@@ -55,6 +55,16 @@ npx gh-pages -d dist --dotfiles
 Enable GitHub Pages: Settings → Pages → Deploy from branch `gh-pages` / (root).
 Site: https://alltomstales-dotcom.github.io/pdf2fhir/
 
+
+## Extract hosting decision matrix
+
+Planning page for where to run the LLM extract step (managed API vs hosted open-weight vs EC2 vs on-prem DGX Spark), with rough $/doc and when each wins:
+
+- Live: https://alltomstales-dotcom.github.io/pdf2fhir/hosting/
+- Source: `public/hosting/index.html` (shipped by Vite under `base: '/pdf2fhir/'`)
+
+Linked from the demo header/footer as **Hosting & cost matrix**. Architecture reminder on that page: LLM → typed JSON → deterministic FHIR mapper + terminology post-check (not free-form Bundle from the LLM).
+
 ## Environment
 
 See `.env.example`:
