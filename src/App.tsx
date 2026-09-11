@@ -146,7 +146,9 @@ export default function App() {
       <footer className="footer">
         <p>
           PDF2FHIR is a SIM / educational prototype. Outputs are not clinical decision support.
-          Stub codes are illustrative (ICD-10 / LOINC / SNOMED / RxNorm).
+          Stub codes are illustrative (ICD-10 / LOINC / SNOMED / RxNorm).{' '}
+          <a href={`${import.meta.env.BASE_URL}DEPLOYMENT.md`}>Deployment options</a>
+          {' '}(AWS / Claude Code / real PDFs).
         </p>
       </footer>
     </div>
